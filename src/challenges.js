@@ -13,21 +13,27 @@ const repeatedWords = [
   "matter"
 ];
 
-function howManyTimes() {}
-
+const howManyTimes = (arrayOfWords,searchString) =>
+  arrayOfWords.filter(word => word === searchString).length
 
 
 
 // Iteration 2 | Number Sequence
-function createSequence() {}
-
+const createSequence = max => 
+  max === 0 ? [] : Array.from(' '.repeat(max+1),(_,index) => index)
 
 
 
 // Iteration 3 | Multiply for Each
 const numbers = [1, 2, 5, 10, 13, 50];
 
-function multiplyBy() {}
+const multiplyBy = (arrayOfNumbers,multiplicator) => {
+  const multipliedArray = [];
+  arrayOfNumbers.forEach(element => {
+    multipliedArray.push(element * multiplicator)
+  });
+  return multipliedArray
+}
 
 
 
@@ -36,8 +42,10 @@ function multiplyBy() {}
 const original = ["cat", "dog", "fish", "bird", "cat", "fish"];
 const toRemove = ["cat", "dog"];
 
-function filterOut() {}
-
+const filterOut = (arrayOfStrings, filterItems) => {
+  const filtered = arrayOfStrings.filter(element => !filterItems.includes(element))
+  return  filtered.length > 0 ? filtered : null
+}
 
 
 
@@ -56,8 +64,11 @@ const duplicateWords = [
   "bring"
 ];
 
-function uniquifyArray() {}
-
+const uniquifyArray = array => {
+  const set = new Set()
+  array.forEach(element => set.add(element))
+  return set.size > 0 ? Array.from(set) : null
+}
 
 
 
@@ -85,4 +96,46 @@ const matrix = [
   [1, 70, 54, 71, 83, 51, 54, 69, 16, 92, 33, 48, 61, 43, 52, 1, 89, 19, 67, 48]
 ];
 
-function greatestProduct() {}
+const smallMatrix = [ 
+  [ 1,  2, 3, 4, 5],
+  [ 1, 20, 3, 4, 5],
+  [ 1, 20, 3, 4, 5],
+  [ 1, 20, 3, 4, 5],
+  [ 1,  4, 3, 4, 5]
+  ]
+
+function greatestProduct(matrix) {
+  let greatestProduct = 0;
+  //start going horizontal
+  matrix.forEach((array) => {
+    //console.log(array)
+    for (let i = 0, j = array.length - 3; j > 0; i++,j-- ) {
+      //console.log(array[i])
+      let product = array.slice(i,i+4).reduce((a,b) => a * b,1)
+      //console.log(array.slice(i,i+4))
+      if (product > greatestProduct) greatestProduct = product
+    }
+    })
+    //go vertical
+    // 1. for each row (= length of an individual array in the matrix)
+    // 2. go from pos to next 4 until one will be undefined
+    // 3. do for next one
+
+    matrix.forEach((element,index,matrix) => {
+      console.log('index:',index)
+      for (let start = 0; start < element.length - 3; start ++) {
+        // console.log(matrix[start][index])
+        // console.log(matrix[start+1][index])
+        // console.log(matrix[start+2][index])
+        // console.log(matrix[start+3][index])
+        // console.log('\n\n')
+        let product = matrix[start][index] * matrix[start+1][index] * matrix[start+2][index] * matrix[start+3][index]
+
+        if (product > greatestProduct) greatestProduct = product
+      }
+    })
+  
+  return greatestProduct
+}
+
+console.log(greatestProduct(smallMatrix))
