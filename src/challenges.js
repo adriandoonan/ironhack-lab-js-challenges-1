@@ -65,9 +65,10 @@ const duplicateWords = [
 ];
 
 const uniquifyArray = array => {
-  const set = new Set()
-  array.forEach(element => set.add(element))
-  return set.size > 0 ? Array.from(set) : null
+   const set = new Set()
+   array.forEach(element => set.add(element))
+   return set.size > 0 ? Array.from(set) : null
+  //return array.length > 0 ? array.filter((element,index) => array.indexOf(element) === index ) : null
 }
 
 
@@ -104,38 +105,190 @@ const smallMatrix = [
   [ 1,  4, 3, 4, 5]
   ]
 
-function greatestProduct(matrix) {
+  const sixMatrix = [ 
+    [ 1,  2, 3, 4, 5, 1],
+    [ 1, 20, 3, 4, 5, 1],
+    [ 1, 20, 3, 4, 5, 1],
+    [ 1, 20, 3, 4, 5, 1],
+    [ 1,  4, 3, 4, 5, 1],
+    [ 1,  1, 1, 1, 1, 1]
+    ]
+
+    const sevenMatrix = [ 
+      [ 1,  2, 3, 4, 5, 1, 1],
+      [ 1, 20, 3, 4, 5, 1, 1],
+      [ 1, 20, 3, 4, 5, 1, 1],
+      [ 1, 20, 3, 4, 5, 1, 1],
+      [ 1,  4, 3, 4, 5, 1, 1],
+      [ 1,  1, 1, 1, 1, 1, 1],
+      [ 1,  1, 1, 1, 1, 1, 1]
+      ]
+
+function greatestProductOrign(matrix) {
   let greatestProduct = 0;
+  let horizontalStartCount = 0;
+  let verticalStartCount = 0;
   //start going horizontal
-  matrix.forEach((array) => {
+  matrix.forEach((array,index) => {
     //console.log(array)
     for (let i = 0, j = array.length - 3; j > 0; i++,j-- ) {
       //console.log(array[i])
+      console.log('row,start:',i , ' ', index)
+      horizontalStartCount++
       let product = array.slice(i,i+4).reduce((a,b) => a * b,1)
       //console.log(array.slice(i,i+4))
       if (product > greatestProduct) greatestProduct = product
     }
-    })
+  })
     //go vertical
     // 1. for each row (= length of an individual array in the matrix)
     // 2. go from pos to next 4 until one will be undefined
     // 3. do for next one
 
     matrix.forEach((element,index,matrix) => {
-      console.log('index:',index)
+      //console.log('row:',index)
       for (let start = 0; start < element.length - 3; start ++) {
-        // console.log(matrix[start][index])
-        // console.log(matrix[start+1][index])
-        // console.log(matrix[start+2][index])
-        // console.log(matrix[start+3][index])
-        // console.log('\n\n')
+        verticalStartCount++
+        console.log('row,start:',index , ' ', start)
+        //console.log('start position: ', start);
+        // console.log('row:',index)
+        //  console.log('start position: ', start);
+        //  console.log(matrix[start][index])
+        //  console.log(matrix[start+1][index])
+        //  console.log(matrix[start+2][index])
+        //  console.log(matrix[start+3][index])
+        //  console.log('\n\n')
         let product = matrix[start][index] * matrix[start+1][index] * matrix[start+2][index] * matrix[start+3][index]
 
         if (product > greatestProduct) greatestProduct = product
       }
     })
+
+    // go vertical
+    matrix.forEach((element,xCoord,matrix) => {
+      if (xCoord < matrix.length - 3) {
+        for (let yCoord = 0;yCoord < element.length;yCoord++) {
+          let foo = 'foo'
+        }
+      }
+    })
   
+   console.log('horizontal starts: ',horizontalStartCount)
+   console.log('vertical starts: ',verticalStartCount)
   return greatestProduct
 }
 
-console.log(greatestProduct(smallMatrix))
+//console.log(greatestProduct(smallMatrix))
+//console.log(greatestProduct(sevenMatrix))
+//console.log(greatestProduct(matrix))
+
+
+
+//console.log(greatestProduct2(smallMatrix))
+//console.log(greatestProduct2(matrix))
+
+const calculatePossibleStarts = (matrixSize,groupSize = 4) => {
+  return (2 * (matrixSize * ( matrixSize - (groupSize - 1)))) - (( matrixSize - (groupSize - 1)) * (matrixSize - (groupSize - 1) ))
+}
+
+//console.log(calculatePossibleStarts(7,4))
+
+
+
+
+
+const greatestProduct = (aMatrix) => {
+  let possibleStartPositions = calculatePossibleStarts(aMatrix.length)
+  console.log(possibleStartPositions)
+  //return possibleStartPositions
+
+  let actualLoops = 0
+
+  let biggestProduct = 0
+
+  const product = (...nums) => [...nums].reduce((a,b) => a * b)
+
+  //console.log(product(2,1,2,3,4))
+  for (let remainingLoops = aMatrix.length ** 2,row = 0,column = 0,runs = 1, op = false; remainingLoops>0; remainingLoops--,runs++,op = false) {
+    if (runs === 1) console.log('remaining loops',remainingLoops)
+    console.log('\n\nrun: ', runs)
+    
+   if (column < aMatrix.length - 3) {
+      console.log('could go horizontal\nx,y:',row,column,aMatrix[row][column]);
+      actualLoops++
+      op = true
+      const horizontal = product(aMatrix[row][column],aMatrix[row][column+1],aMatrix[row][column+2],aMatrix[row][column+3])
+      console.log('horizontal',horizontal)
+      if (horizontal > biggestProduct) biggestProduct = horizontal;
+    }
+    
+    if (row < aMatrix.length - 3) {
+      console.log('could go vertical\nx,y:',row,column,aMatrix[row][column]);
+      actualLoops++
+      op = true
+      const vertical = product(aMatrix[row][column],aMatrix[row+1][column],aMatrix[row+2][column],aMatrix[row+3][column])
+      console.log('vertical',vertical)
+      if (vertical > biggestProduct) biggestProduct = vertical;
+    }
+    
+    if (row >= 3 && column < aMatrix.length - 3) {
+      console.log('could go up, right and cross\nx,y:',row,column,aMatrix[row][column]);
+      actualLoops++
+      op = true
+      //console.log('targets',aMatrix[row][column],aMatrix[row-1][column+1],aMatrix[row-2][column+2],aMatrix[row-3][column+3])
+      const upAndRight = product(aMatrix[row][column],aMatrix[row-1][column+1],aMatrix[row-2][column+2],aMatrix[row-3][column+3])
+      console.log('upAndRight',upAndRight)
+      if (upAndRight > biggestProduct) biggestProduct = upAndRight;
+    }
+    
+    if (column < aMatrix.length - 3 && row < aMatrix.length - 3) {
+      console.log('could go down, right and cross\nx,y:',row,column,aMatrix[row][column]);
+      actualLoops++
+      op = true
+      //console.log('targets',aMatrix[row][column],aMatrix[row+1][column+1],aMatrix[row+2][column+2],aMatrix[row+3][column+3])
+      const downAndRight = product(aMatrix[row][column],aMatrix[row+1][column+1],aMatrix[row+2][column+2],aMatrix[row+3][column+3])
+      console.log('downAndRight',downAndRight)
+      if (downAndRight > biggestProduct) biggestProduct = downAndRight;
+    }
+    if (!op) {
+      console.log('can do nothing\nx,y:',row,column,aMatrix[row][column]);
+    }
+    //runs % aMatrix.length === 0 ? console.log('should reset on run',runs,runs % aMatrix.length,'remaining loops',remainingLoops) : console.log('did nothing on run', runs,runs % aMatrix.length)
+    if (runs > 1 && runs % aMatrix.length === 0) {
+      console.log('\nmodulo on run '+ actualLoops + ' remaining ' + remainingLoops + ' length ' + aMatrix.length)
+      row = row + 1;
+      column = 0}
+    else column = column + 1
+  }
+
+  console.log('\nactual loops',actualLoops)
+
+  return biggestProduct
+  
+}
+
+const nineMatrix = [ 
+  [  0,  1,  2,  3,  4,  5,  6,  7,  8], //0
+  [ 10, 11, 12, 13, 14, 15, 16, 17, 18], //1
+  [ 20, 21, 22, 23, 24, 25, 26, 27, 28], //2
+  [ 30, 31, 32, 33, 34, 35, 36, 37, 38], //3
+  [ 40, 41, 42, 43, 44, 45, 46, 47, 48], //4
+  [ 50, 51, 52, 53, 54, 55, 56, 57, 58], //5
+  [ 60, 61, 62, 63, 64, 65, 66, 67, 68], //6
+  [ 70, 71, 72, 73, 74, 75, 76, 77, 78], //7
+  [ 80, 81, 82, 83, 84, 85, 86, 87, 88]  //8
+]
+
+const nineSiglesMatrix = [ 
+  [  1,  1,  1,  1,  1,  1,  1,  1,  2], //0
+  [  1,  1,  1,  1,  1,  1,  1,  2,  1], //1
+  [  1,  1,  1,  1,  1,  1,  1,  1,  1], //2
+  [  1,  1,  1,  1,  1,  1,  1,  1,  1], //3
+  [  1,  1,  1,  1,  1,  1,  1,  1,  1], //4
+  [  1,  1,  1,  1,  1,  1,  1,  1,  1], //5
+  [  1,  1,  1,  1,  1,  1,  1,  1,  1], //6
+  [  1,  2,  1,  1,  1,  1,  1,  1,  1], //7
+  [  1,  1,  1,  1,  1,  1,  1,  1,  1]  //8
+]
+ //console.log(greatestProduct(nineMatrix))
+//console.log(greatestProduct2(nineSiglesMatrix))
